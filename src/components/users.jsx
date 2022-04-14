@@ -29,7 +29,7 @@ const Users = ({ users, onDelete, onToggleBookMark }) => {
         setCurrentPage(pageIndex);
     };
 
-    let filteredUsers = selectedProf ? users.filter((user) => user.profession === selectedProf) : users;
+    let filteredUsers = selectedProf ? users.filter((user) => user.profession.name === selectedProf.name) : users;
     let count = filteredUsers.length;
 
     let userCrop = paginate(filteredUsers, currentPage, pageSize);
