@@ -16,7 +16,7 @@ const Users = () => {
     let pageSize = 8;
 
     let [users, setUsers] = useState();
-    let [data, setData] = useState({ search: "" });
+    let [data, setData] = useState("");
 
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data));
@@ -55,32 +55,33 @@ const Users = () => {
         setCurrentPage(pageIndex);
     };
 
+    let clearFilter = () => {
+        setSelectedProf();
+    };
+
     let handleSort = (item) => {
         setSortBy(item);
     };
 
+    let handleChange = ({ target }) => {
+        clearFilter();
+        setData(target.value);
+    };
+
     if (users) {
-        let filteredUsers = selectedProf ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) : users;
+        let filteredUsers;
+        if (!selectedProf) {
+            filteredUsers = data ? users.filter(user => user.name.toLowerCase().indexOf(data.toLowerCase()) !== -1) : users;
+        } else {
+            data = "";
+            filteredUsers = selectedProf ? users.filter((user) => JSON.stringify(user.profession) === JSON.stringify(selectedProf)) : users;
+        };
 
         let count = filteredUsers.length;
 
         let sortedUsers = _.orderBy(filteredUsers, [sortBy.path], [sortBy.order]);
 
         let userCrop = paginate(sortedUsers, currentPage, pageSize);
-
-        let clearFilter = () => {
-            setSelectedProf();
-        };
-
-        let handleChange = ({ target }) => {
-            setData(prevState => ({
-                ...prevState,
-                [target.name]: target.value
-            }));
-            setUsers(
-                users.filter(user => user.name.includes(target.value))
-            );
-        };
 
         return (
             <div className="d-flex">
@@ -103,15 +104,18 @@ const Users = () => {
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
                     <form action="">
-                        <label htmlFor="search">
-                            <input
-                                type="text"
-                                id = "search"
-                                name = "search"
-                                value = {data.search}
-                                onChange={handleChange}
-                            />
-                        </label>
+                        <div className="row mt-2">
+                            <label htmlFor="search">
+                                <input
+                                    placeholder="Search..."
+                                    type="text"
+                                    id = "search"
+                                    name = "search"
+                                    value = {data}
+                                    onChange={handleChange}
+                                />
+                            </label>
+                        </div>
                     </form>
                     {count !== 0 ? (
                         <UserTable
