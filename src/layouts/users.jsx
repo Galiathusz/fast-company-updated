@@ -16,6 +16,7 @@ const Users = () => {
     let pageSize = 8;
 
     let [users, setUsers] = useState();
+    let [data, setData] = useState({ search: "" });
 
     useEffect(() => {
         api.users.fetchAll().then((data) => setUsers(data));
@@ -71,6 +72,16 @@ const Users = () => {
             setSelectedProf();
         };
 
+        let handleChange = ({ target }) => {
+            setData(prevState => ({
+                ...prevState,
+                [target.name]: target.value
+            }));
+            setUsers(
+                users.filter(user => user.name.includes(target.value))
+            );
+        };
+
         return (
             <div className="d-flex">
 
@@ -91,6 +102,17 @@ const Users = () => {
                 )}
                 <div className="d-flex flex-column">
                     <SearchStatus length={count} />
+                    <form action="">
+                        <label htmlFor="search">
+                            <input
+                                type="text"
+                                id = "search"
+                                name = "search"
+                                value = {data.search}
+                                onChange={handleChange}
+                            />
+                        </label>
+                    </form>
                     {count !== 0 ? (
                         <UserTable
                             users = {userCrop}
