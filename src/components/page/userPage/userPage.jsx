@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
-import api from "../api";
-import Quality from "./quality";
+import api from "../../../api";
+import Quality from "../../ui/qualities/quality";
 import PropTypes from "prop-types";
+import { Link } from "react-router-dom";
 
-const UserPage = ({ match, history }) => {
+const UserPage = ({ match }) => {
     let userId = match.params.userId;
 
     let [user, setUser] = useState();
     useEffect(() => {
         api.users.getById(userId).then((data) => setUser(data));
     }, []);
-
-    let handleToAllUsers = () => {
-        history.push("/users");
-    };
 
     if (user) {
         return (
@@ -25,7 +22,12 @@ const UserPage = ({ match, history }) => {
                 ))}</h3>
                 <h3>completedMeetings: {user.completedMeetings}</h3>
                 <h2>Rate: {user.rate}</h2>
-                <button onClick={() => { handleToAllUsers(); }}>Все пользователи</button>
+                <Link
+                    key = {user._id}
+                    to = {`/users/${userId}/edit`}
+                >
+                    <button>Изменить</button>
+                </Link>
             </>
         );
     }
@@ -35,8 +37,8 @@ const UserPage = ({ match, history }) => {
 };
 
 UserPage.propTypes = {
-    match: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired
+    match: PropTypes.object,
+    history: PropTypes.object
 };
 
 export default UserPage;

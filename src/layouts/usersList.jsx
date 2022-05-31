@@ -1,13 +1,13 @@
 import React from "react";
-import Users from "../layouts/users";
-import UserPage from "./userPage";
+import UserPage from "../components/page/userPage";
+import UsersPage from "../components/page/usersPage";
 import PropTypes from "prop-types";
 
 const UsersList = ({ match, history }) => {
     let userId = match.params.userId;
     return (
         <>
-            { userId ? <UserPage match = {match} history = {history}/> : <Users/>}
+            { userId ? <UserPage match = {match} history = {history}/> : <UsersPage/>}
         </>
     );
 };
