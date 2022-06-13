@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 import api from "../../../api";
-import Quality from "../../ui/qualities/quality";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import UserCard from "./userCards/userCard";
+import QualitiesCard from "./userCards/qualitiesCard";
+import MeetingsCard from "./userCards/meetingsCard";
+import CommentsList from "./comments/commentsList";
 
 const UserPage = ({ match }) => {
     let userId = match.params.userId;
 
     let [user, setUser] = useState();
+
     useEffect(() => {
         api.users.getById(userId).then((data) => setUser(data));
     }, []);
@@ -15,19 +18,28 @@ const UserPage = ({ match }) => {
     if (user) {
         return (
             <>
-                <h1>{user.name}</h1>
-                <h2>Профессия: {user.profession.name}</h2>
-                <h3>{user.qualities.map((quality) => (
-                    <Quality key={quality._id} {...quality} />
-                ))}</h3>
-                <h3>completedMeetings: {user.completedMeetings}</h3>
-                <h2>Rate: {user.rate}</h2>
-                <Link
-                    key = {user._id}
-                    to = {`/users/${userId}/edit`}
-                >
-                    <button>Изменить</button>
-                </Link>
+                <div className="container">
+                    <div className="row gutters-sm">
+                        <div className="col-md-4 mb-3">
+                            <UserCard
+                                user = {user}
+                                match = {match}
+                            />
+                            <QualitiesCard
+                                user = {user}
+                            />
+                            <MeetingsCard
+                                user = {user}
+                            />
+                        </div>
+                        <div className = "col-md-8">
+                            <CommentsList
+                                user = {user}
+                                match = {match}
+                            />
+                        </div>
+                    </div>
+                </div>
             </>
         );
     }
